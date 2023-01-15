@@ -6,12 +6,17 @@
 #include <stdbool.h>
 #include "i2c_status_code.h"
 
+#define I2C_GENERAL_BYTES_MAX 32          // I2C max reading bytes (1 ~ 255)
+#define I2C_READING_BYTES_MAX 32          // I2C max reading bytes (1 ~ 255)
+#define I2C_WRITING_BYTES_MAX 32          // I2C max writing bytes (1 ~ 255)
+
 void I2C_init_slave(unsigned char address); // init I2C to slave
 
-volatile unsigned char I2C_data = 0;
-volatile unsigned char I2C_general_data = 0x00; // general call data (power, ---, ---, ---, ---, scroll_lock, caps_lock, num_lock)
-volatile bool power_state = false; // led on/off
-volatile unsigned char key_state = 0x00; // rsw_cw, rsw_ccw, rsw_sw, key5, key4, key3, key2, key1
+// general call data (power, ---, ---, ---, ---, scroll_lock, caps_lock, num_lock)
+volatile unsigned char I2C_general_data[I2C_READING_BYTES_MAX] = {0,};  // I2C general call data
+volatile unsigned char I2C_reading_data[I2C_READING_BYTES_MAX] = {0,};  // I2C reading data
+volatile unsigned char I2C_writing_data[I2C_WRITING_BYTES_MAX] = {0,};  // I2C writing data
+
 
 ISR(TWI_vect) {
 
@@ -21,35 +26,31 @@ ISR(TWI_vect) {
     case I2C_SC_SR_GNC:
     break;
     case I2C_SC_SR_DBA:
-      I2C_data = TWDR;
-      power_state = I2C_data & 0x80;
+      I2C_reading_data[0] = TWDR;
     break;
     case I2C_SC_SR_DBN:
-      I2C_data = TWDR;
-      power_state = I2C_data & 0x80;
+      I2C_reading_data[0] = TWDR;
     break;
     case I2C_SC_SR_GNA:
-      I2C_general_data = TWDR;
-      power_state = I2C_general_data & 0x80;
+      I2C_general_data[0] = TWDR;
     break;
     case I2C_SC_SR_GNN:
-      I2C_general_data = TWDR;
-      power_state = I2C_general_data & 0x80;
+      I2C_general_data[0] = TWDR;
     break;
     case I2C_SC_SR_STO:
       TWCR = 0xC5; // clear TWINT, ACK
     break;
     case I2C_SC_ST_SRA:
-      key_state += rotery_check() << 6;
-      TWDR = key_state;
+      I2C_writing_data[0] += rotery_check() << 6;
+      TWDR = I2C_writing_data[0];
       //TWCR = 0x85; // clear TWINT, NOT ACK
       TWCR = 0xC5; // clear TWINT, ACK
     break;
     case I2C_SC_ST_DBA:
-      key_state = 0x00;
+      I2C_reading_data[0] = 0x00;
     break;
     case I2C_SC_ST_DBN:
-      key_state = 0x00;
+      I2C_reading_data[0] = 0x00;
       TWCR = 0xC5; // clear TWINT, ACK
     break;
     case I2C_SC_ST_ARA:
