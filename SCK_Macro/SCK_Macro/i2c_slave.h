@@ -11,7 +11,8 @@
 #define I2C_WRITING_BYTES_MAX 32          // I2C max writing bytes (1 ~ 255)
 
 void I2C_init_slave(unsigned char address); // init I2C to slave
-
+void I2C_address_set(unsigned char address, bool allow_general_call);; // set I2C address
+  
 // general call data (power, ---, ---, ---, ---, scroll_lock, caps_lock, num_lock)
 volatile unsigned char I2C_general_data[I2C_READING_BYTES_MAX] = {0,};  // I2C general call data
 volatile unsigned char I2C_reading_data[I2C_READING_BYTES_MAX] = {0,};  // I2C reading data
@@ -73,4 +74,9 @@ void I2C_init_slave(unsigned char address) { // set I2C to slave
 
   TWAR = (address << 1) | 1; // address set + general call enable
   TWCR = 0xC5; // 0b11000101, I2C interrupt set, ACK
+}
+
+void I2C_address_set(unsigned char address, bool allow_general_call) { // set I2C address
+
+  TWAR = (address << 1) | allow_general_call; // address set + general call enable
 }
