@@ -31,8 +31,8 @@ unsigned char get_jp_state(void);               // 0x00 ~ 0x0F
 void get_key_state(void);                       // 0x00 ~ 0x7F or 0xBF
 
 unsigned char my_address = 0x00;                // I2C address
-volatile bool power_state = false; // led on/off
-volatile unsigned char key_state = 0x00; // rsw_cw, rsw_ccw, rsw_sw, key5, key4, key3, key2, key1
+volatile bool power_state = false;              // led on/off
+volatile unsigned char key_state = 0x00;        // rsw_cw, rsw_ccw, rsw_sw, key5, key4, key3, key2, key1
 
 int main(void) {
   
