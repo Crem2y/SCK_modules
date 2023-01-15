@@ -193,7 +193,7 @@
     <Compile Include="main.cpp">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="mywatchdog.h">
+    <Compile Include="watchdog.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="rotery_sw.h">

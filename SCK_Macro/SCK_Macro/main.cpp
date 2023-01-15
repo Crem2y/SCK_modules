@@ -30,12 +30,16 @@ void pin_init(void);
 unsigned char get_jp_state(void);               // 0x00 ~ 0x0F
 void get_key_state(void);                       // 0x00 ~ 0x7F or 0xBF
 
+unsigned char my_address = 0x00;                // I2C address
+volatile bool power_state = false; // led on/off
+volatile unsigned char key_state = 0x00; // rsw_cw, rsw_ccw, rsw_sw, key5, key4, key3, key2, key1
 
 int main(void) {
   
   pin_init();
   rotery_init();
-  I2C_init_slave(0x20 + get_jp_state());
+  my_address = 0x20 + get_jp_state();
+  I2C_init_slave(my_address);
 
   pixel[0] = (rgbw_color){16,16,16,16};
   led_strip_write(pixel, LED_COUNT);
@@ -56,22 +60,25 @@ int main(void) {
   
   while(1) {
     get_key_state();
+    I2C_writing_data[0] = key_state;
+    power_state = I2C_general_data[0] & 0x80;
     
-    if(power_state) {
+    if(power_state) { // LED on
       for(unsigned char i=0; i<LED_COUNT; i++) {
         pixel[i] = (rgbw_color){16,16,16,16};
       }
-    } else {
+    } else { // LED off
       for(unsigned char i=0; i<LED_COUNT; i++) {
         pixel[i] = (rgbw_color){0,0,0,0};
       }
     }
-    
     cli();
     led_strip_write(pixel, LED_COUNT);
     sei();
+    
     if((TWSR & 0xF8) == 0x00) { // if I2C is error condition
       TWCR &= ~0x10; // clear TWSTO to escape I2C error
+      TWAR = (my_address << 1) | 1; // address set + general call enable
     }    
     WDT_reset();
     _delay_ms(1);
