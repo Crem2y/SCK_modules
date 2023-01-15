@@ -1,0 +1,7 @@
+.vs/
+Debug/
+*.backup
+*.bak
+*.code-workspace
+*.cppproj
+*.xml
