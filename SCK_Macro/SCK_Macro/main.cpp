@@ -21,7 +21,7 @@
 #include "rotery_sw.h"
 #include "i2c_status_code.h"
 #include "i2c_slave.h"
-#include "mywatchdog.h"
+#include "watchdog.h"
 
 #define LED_COUNT 5
 rgbw_color pixel[LED_COUNT];
