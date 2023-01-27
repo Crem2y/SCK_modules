@@ -19,9 +19,10 @@
 
 #include "led_sk6812.h"
 #include "rotery_sw.h"
-#include "i2c_status_code.h"
 #include "i2c_slave.h"
 #include "watchdog.h"
+
+// general call data (power, ---, ---, ---, ---, scroll_lock, caps_lock, num_lock)
 
 #define LED_COUNT 5
 rgbw_color pixel[LED_COUNT];
@@ -40,7 +41,8 @@ int main(void) {
   rotery_init();
   my_address = 0x20 + get_jp_state();
   I2C_init_slave(my_address);
-
+  
+  // boot led start
   pixel[0] = (rgbw_color){16,16,16,16};
   led_strip_write(pixel, LED_COUNT);
   _delay_ms(1000);
@@ -53,6 +55,7 @@ int main(void) {
   }
   pixel[LED_COUNT-1] = (rgbw_color){0,0,0,0};
   led_strip_write(pixel, LED_COUNT);
+  // boot led end
   
   TWCR |= 0x80; //clear TWINT
   WDT_enable();
