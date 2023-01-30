@@ -4,8 +4,8 @@
 #define ROTERY_SW_H_
 
 #define RSW_NONE 0
-#define RSW_CW   1
-#define RSW_CCW  2
+#define RSW_CCW  1
+#define RSW_CW   2
 
 volatile int previous = 0;
 volatile int counter = 0;

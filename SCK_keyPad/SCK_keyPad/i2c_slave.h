@@ -16,7 +16,7 @@ void I2C_address_set(unsigned char address, bool allow_general_call);; // set I2
 volatile unsigned char I2C_general_data[I2C_READING_BYTES_MAX] = {0,};  // I2C general call data
 volatile unsigned char I2C_reading_data[I2C_READING_BYTES_MAX] = {0,};  // I2C reading data
 volatile unsigned char I2C_writing_data[I2C_WRITING_BYTES_MAX] = {0,};  // I2C writing data
-
+volatile unsigned char I2C_data_count = 0;  // I2C data count
 
 ISR(TWI_vect) {
 
@@ -41,16 +41,16 @@ ISR(TWI_vect) {
       TWCR = 0xC5; // clear TWINT, ACK
     break;
     case I2C_SC_ST_SRA:
-      I2C_writing_data[0] += rotery_check() << 6;
       TWDR = I2C_writing_data[0];
-      //TWCR = 0x85; // clear TWINT, NOT ACK
+      I2C_data_count = 1;
       TWCR = 0xC5; // clear TWINT, ACK
     break;
     case I2C_SC_ST_DBA:
-      I2C_reading_data[0] = 0x00;
+      TWDR = I2C_writing_data[I2C_data_count];
+      I2C_writing_data[I2C_data_count] = 0x00;
+      I2C_data_count++;
     break;
     case I2C_SC_ST_DBN:
-      I2C_reading_data[0] = 0x00;
       TWCR = 0xC5; // clear TWINT, ACK
     break;
     case I2C_SC_ST_ARA:

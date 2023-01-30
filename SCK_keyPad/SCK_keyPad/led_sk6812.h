@@ -1,6 +1,10 @@
 ﻿#ifndef LED_SK6812
 #define LED_SK6812
 
+#define LED_PRT PORTC
+#define LED_DDR DDRC
+#define LED_PIN 1
+
 // based on the excellent pololu/pololu-led-strip-avr.git project
 // optimized for SK6812 RGBW
 
