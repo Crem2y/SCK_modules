@@ -22,6 +22,7 @@
 // general call data (power, ---, ---, ---, ---, scroll_lock, caps_lock, num_lock)
 
 void pin_init(void);
+void adc_init(void);
 void get_key_state(void);
 void get_key_state_h(unsigned char mask);
 
@@ -39,6 +40,8 @@ int main(void) {
   TWCR |= 0x80; //clear TWINT
   WDT_enable();
   sei();
+  
+  adc_init();
   
   while(1) {
     get_key_state();
@@ -68,6 +71,11 @@ void pin_init(void) {
   PORTD = 0xFF;	// 0b11111111 // pull-up
 } // key_h1 : ADC6, key_h2 : ADC7
 
+void adc_init(void) {
+  ADMUX = 0x46;
+  ADCSRA = 0x80;
+}
+
 void get_key_state(void) {
 
   unsigned char i;
@@ -89,19 +97,37 @@ void get_key_state(void) {
 
 void get_key_state_h(unsigned char mask) {
 
-  //key_temp[0] |= ((PIND & 0x04) ? 0x00 : mask);     // key_h1 check (ADC6)
-  //key_temp[1] |= ((PIND & 0x08) ? 0x00 : mask);     // key_h2 check (ADC7)
-
+  ADMUX = 0x46;   // set ADC6
+  ADCSRA = 0xC0;  // start ADC
+  
   key_temp[2]  |= ((PINC & 0x01) ? 0x00 : mask);     // key_h3  check
   key_temp[3]  |= ((PINC & 0x02) ? 0x00 : mask);     // key_h4  check
   key_temp[4]  |= ((PINC & 0x04) ? 0x00 : mask);     // key_h5  check
   key_temp[5]  |= ((PINC & 0x08) ? 0x00 : mask);     // key_h6  check
   key_temp[6]  |= ((PIND & 0x01) ? 0x00 : mask);     // key_h7  check
   key_temp[7]  |= ((PIND & 0x02) ? 0x00 : mask);     // key_h8  check
+
+  while(!(ADCSRA & 0x10));  // wait until ADC complete
+  // key_h1 check (ADC6)
+  if(ADC > 512) // if high
+    key_temp[0] |= 0x00;
+  else
+    key_temp[0] |= mask;
+  
+  ADMUX = 0x47;   // set ADC7
+  ADCSRA = 0xC0;  // start ADC
+  
   key_temp[8]  |= ((PIND & 0x04) ? 0x00 : mask);     // key_h9  check
   key_temp[9]  |= ((PIND & 0x08) ? 0x00 : mask);     // key_h10 check
   key_temp[10] |= ((PIND & 0x10) ? 0x00 : mask);     // key_h11 check
   key_temp[11] |= ((PIND & 0x20) ? 0x00 : mask);     // key_h12 check
   key_temp[12] |= ((PIND & 0x40) ? 0x00 : mask);     // key_h13 check
   key_temp[13] |= ((PIND & 0x80) ? 0x00 : mask);     // key_h14 check
+  
+  while(!(ADCSRA & 0x10));  // wait until ADC complete
+  // key_h2 check (ADC7)
+  if(ADC > 512) // if high
+  key_temp[1] |= 0x00;
+  else
+  key_temp[1] |= mask;
 }
