@@ -153,10 +153,19 @@
     </ToolchainSettings>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="i2c_slave.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="i2c_status_code.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="led_sk6812.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="main.cpp">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="watchdog.h">
       <SubType>compile</SubType>
     </Compile>
   </ItemGroup>

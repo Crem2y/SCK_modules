@@ -19,9 +19,10 @@
 
 #include "led_sk6812.h"
 #include "rotery_sw.h"
-#include "i2c_status_code.h"
 #include "i2c_slave.h"
-#include "mywatchdog.h"
+#include "watchdog.h"
+
+// general call data (power, ---, ---, ---, ---, scroll_lock, caps_lock, num_lock)
 
 #define LED_COUNT 5
 rgbw_color pixel[LED_COUNT];
@@ -30,13 +31,18 @@ void pin_init(void);
 unsigned char get_jp_state(void);               // 0x00 ~ 0x0F
 void get_key_state(void);                       // 0x00 ~ 0x7F or 0xBF
 
+unsigned char my_address = 0x00;                // I2C address
+volatile bool power_state = false;              // led on/off
+volatile unsigned char key_state = 0x00;        // rsw_ccw, rsw_cw, rsw_sw, key1, key2, key3, key4, key5
 
 int main(void) {
   
   pin_init();
   rotery_init();
-  I2C_init_slave(0x20 + get_jp_state());
-
+  my_address = 0x20 + get_jp_state();
+  I2C_init_slave(my_address);
+  
+  // boot led start
   pixel[0] = (rgbw_color){16,16,16,16};
   led_strip_write(pixel, LED_COUNT);
   _delay_ms(1000);
@@ -49,6 +55,7 @@ int main(void) {
   }
   pixel[LED_COUNT-1] = (rgbw_color){0,0,0,0};
   led_strip_write(pixel, LED_COUNT);
+  // boot led end
   
   TWCR |= 0x80; //clear TWINT
   WDT_enable();
@@ -56,22 +63,25 @@ int main(void) {
   
   while(1) {
     get_key_state();
+    I2C_writing_data[0] = key_state;
+    power_state = I2C_general_data[0] & 0x80;
     
-    if(power_state) {
+    if(power_state) { // LED on
       for(unsigned char i=0; i<LED_COUNT; i++) {
         pixel[i] = (rgbw_color){16,16,16,16};
       }
-    } else {
+    } else { // LED off
       for(unsigned char i=0; i<LED_COUNT; i++) {
         pixel[i] = (rgbw_color){0,0,0,0};
       }
     }
-    
     cli();
     led_strip_write(pixel, LED_COUNT);
     sei();
+    
     if((TWSR & 0xF8) == 0x00) { // if I2C is error condition
       TWCR &= ~0x10; // clear TWSTO to escape I2C error
+      TWAR = (my_address << 1) | 1; // address set + general call enable
     }    
     WDT_reset();
     _delay_ms(1);
@@ -98,9 +108,12 @@ unsigned char get_jp_state(void) {              // 0x00 ~ 0x0F
 void get_key_state(void) {                      // 0x00 ~ 0x7F or 0xBF
   
   unsigned char temp = 0;
-  
-  temp += (~PINB & 0x3E) >> 1;                  // key 5~1
   temp += (~PIND & 0x10) << 1;                  // rsw_sw
+  temp += (~PINB & 0x02) << 3;                  // key 1
+  temp += (~PINB & 0x04) << 1;                  // key 2
+  temp += (~PINB & 0x08) >> 1;                  // key 3
+  temp += (~PINB & 0x10) >> 3;                  // key 4
+  temp += (~PINB & 0x20) >> 5;                  // key 5
 
   key_state = temp;
 }
