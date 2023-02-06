@@ -6,7 +6,7 @@
 
 // DO NOT PUSH ANY KEY WHILE DOWNLOADING!!!
 
-#define F_CPU 16000000UL
+#define F_CPU 16000000
 
 #include <avr/io.h>
 #include <avr/interrupt.h>
@@ -23,7 +23,7 @@
 // general call data (power, ---, ---, ---, ---, scroll_lock, caps_lock, num_lock)
 
 #define LED_COUNT 17
-rgbw_color pixel[LED_COUNT];
+rgb_color pixel[LED_COUNT];
 
 void pin_init(void);
 unsigned char get_jp_state(void);
@@ -31,7 +31,7 @@ void get_key_state(void);
 void get_key_state_h(unsigned char mask);
 
 unsigned char my_address = 0x00;                // I2C address
-volatile bool power_state = false;              // led on/off
+volatile bool power_state = true;              // led on/off
 volatile unsigned char key_state[4] = {0x00, 0x00, 0x00, 0x00}; // key line H1, H2, H3, H4 {---, ---, ---, key_v1, key_v2, key_v3, key_v4, key_v5}
 unsigned char key_temp[4] = {0,};
 
@@ -42,18 +42,19 @@ int main(void) {
   I2C_init_slave(my_address);
   
   // boot led start
-  pixel[0] = (rgbw_color){16,16,16,16};
+  PORTB &= ~0x38;
+  pixel[0] = (rgb_color){15,15,15};
   led_strip_write(pixel, LED_COUNT);
-  _delay_ms(1000);
-  
+  _delay_ms(50);
   for(unsigned char i=1; i<LED_COUNT; i++) {
-    pixel[i] = (rgbw_color){16,16,16,16};
-    pixel[i-1] = (rgbw_color){0,0,0,0};
+    pixel[i] = (rgb_color){15,15,15};
+    pixel[i-1] = (rgb_color){0,0,0};
     led_strip_write(pixel, LED_COUNT);
-    _delay_ms(1000);
+    _delay_ms(50);
   }
-  pixel[LED_COUNT-1] = (rgbw_color){0,0,0,0};
+  pixel[LED_COUNT-1] = (rgb_color){0,0,0};
   led_strip_write(pixel, LED_COUNT);
+  PORTB |= 0x38;
   // boot led end
   
   TWCR |= 0x80; //clear TWINT
@@ -65,7 +66,7 @@ int main(void) {
     for (unsigned char i=0; i<4; i++) {
       I2C_writing_data[i] = key_state[i];
     }
-    power_state = I2C_general_data[0] & 0x80;
+    //power_state = I2C_general_data[0] & 0x80;
 
     // lock led check
     if(I2C_general_data[0] & 0x01) {
@@ -86,11 +87,11 @@ int main(void) {
     
     if(power_state) {
       for(unsigned char i=0; i<LED_COUNT; i++) {
-        pixel[i] = (rgbw_color){16,16,16,16};
+        pixel[i] = (rgb_color){15,15,15};
       }
-      } else {
+    } else {
       for(unsigned char i=0; i<LED_COUNT; i++) {
-        pixel[i] = (rgbw_color){0,0,0,0};
+        pixel[i] = (rgb_color){0,0,0};
       }
     }
     
