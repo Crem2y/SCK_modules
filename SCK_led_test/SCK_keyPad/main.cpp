@@ -1,6 +1,4 @@
-﻿#pragma once
-
-// This is AVR code for driving the RGB LED strips from Pololu.
+﻿// This is AVR code for driving the RGB LED strips from Pololu.
 //
 // It allows complete control over the color of an arbitrary number of LEDs.
 // This implementation disables interrupts while it does bit-banging with
@@ -12,7 +10,7 @@
 
 // This line specifies the frequency your AVR is running at.
 // This code supports 20 MHz, 16 MHz and 8MHz
-//#define F_CPU 16000000
+#define F_CPU 16000000
 
 // These lines specify what pin the LED strip is on.
 // You will either need to attach the LED strip's data line to PC0 or change these
@@ -136,4 +134,25 @@ void __attribute__((noinline)) led_strip_write(rgb_color * colors, uint16_t coun
   }
   sei();          // Re-enable interrupts now that we are done.
   _delay_us(80);  // Send the reset signal.
+}
+
+#define LED_COUNT 17
+rgb_color colors[LED_COUNT];
+
+int main()
+{
+  uint16_t time = 0;
+  while (1)
+  {
+    for (uint16_t i = 0; i < LED_COUNT; i++)
+    {
+      uint8_t x = (time >> 2) - 8 * i;
+      colors[i] = (rgb_color){ x, 255 - x, x };
+    }
+
+    led_strip_write(colors, LED_COUNT);
+
+    _delay_ms(20);
+    time += 20;
+  }
 }

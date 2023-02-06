@@ -23,7 +23,7 @@
 // general call data (power, ---, ---, ---, ---, scroll_lock, caps_lock, num_lock)
 
 #define LED_COUNT 13
-rgbw_color pixel[LED_COUNT];
+rgb_color pixel[LED_COUNT];
 
 void pin_init(void);
 unsigned char get_jp_state(void);
@@ -42,17 +42,17 @@ int main(void) {
   I2C_init_slave(my_address);
   
   // boot led start
-  pixel[0] = (rgbw_color){16,16,16,16};
+  pixel[0] = (rgb_color){15,15,15};
   led_strip_write(pixel, LED_COUNT);
   _delay_ms(1000);
   
   for(unsigned char i=1; i<LED_COUNT; i++) {
-    pixel[i] = (rgbw_color){16,16,16,16};
-    pixel[i-1] = (rgbw_color){0,0,0,0};
+    pixel[i] = (rgb_color){15,15,15};
+    pixel[i-1] = (rgb_color){0,0,0};
     led_strip_write(pixel, LED_COUNT);
     _delay_ms(1000);
   }
-  pixel[LED_COUNT-1] = (rgbw_color){0,0,0,0};
+  pixel[LED_COUNT-1] = (rgb_color){0,0,0};
   led_strip_write(pixel, LED_COUNT);
   // boot led end
   
@@ -69,11 +69,11 @@ int main(void) {
     
     if(power_state) {
       for(unsigned char i=0; i<LED_COUNT; i++) {
-        pixel[i] = (rgbw_color){16,16,16,16};
+        pixel[i] = (rgb_color){15,15,15};
       }
       } else {
       for(unsigned char i=0; i<LED_COUNT; i++) {
-        pixel[i] = (rgbw_color){0,0,0,0};
+        pixel[i] = (rgb_color){0,0,0};
       }
     }
     
