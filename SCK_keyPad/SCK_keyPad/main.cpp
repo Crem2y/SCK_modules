@@ -38,7 +38,7 @@ unsigned char key_temp[4] = {0,};
 int main(void) {
   
   pin_init();
-  my_address = 0x1C + get_jp_state();
+  my_address = 0x18 + get_jp_state();
   I2C_init_slave(my_address);
   
   // boot led start
