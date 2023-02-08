@@ -31,7 +31,7 @@ void get_key_state(void);
 void get_key_state_h(unsigned char mask);
 
 unsigned char my_address = 0x00;                // I2C address
-volatile bool power_state = false;              // led on/off
+volatile bool power_state = true;              // led on/off
 volatile unsigned char key_state[3] = {0x00, 0x00, 0x00}; // key line H1, H2, H3 {---, ---, ---, key_v1, key_v2, key_v3, key_v4, key_v5}
 unsigned char key_temp[3] = {0,};
 
@@ -42,18 +42,11 @@ int main(void) {
   I2C_init_slave(my_address);
   
   // boot led start
-  pixel[0] = (rgb_color){15,15,15};
-  led_strip_write(pixel, LED_COUNT);
-  _delay_ms(1000);
-  
-  for(unsigned char i=1; i<LED_COUNT; i++) {
+  for(unsigned char i=0; i<LED_COUNT; i++) {
     pixel[i] = (rgb_color){15,15,15};
-    pixel[i-1] = (rgb_color){0,0,0};
     led_strip_write(pixel, LED_COUNT);
-    _delay_ms(1000);
+    _delay_ms(50);
   }
-  pixel[LED_COUNT-1] = (rgb_color){0,0,0};
-  led_strip_write(pixel, LED_COUNT);
   // boot led end
   
   TWCR |= 0x80; //clear TWINT
