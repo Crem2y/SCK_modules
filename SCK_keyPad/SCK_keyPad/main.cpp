@@ -43,17 +43,11 @@ int main(void) {
   
   // boot led start
   PORTB &= ~0x38;
-  pixel[0] = (rgb_color){15,15,15};
-  led_strip_write(pixel, LED_COUNT);
-  _delay_ms(50);
-  for(unsigned char i=1; i<LED_COUNT; i++) {
+  for(unsigned char i=0; i<LED_COUNT; i++) {
     pixel[i] = (rgb_color){15,15,15};
-    pixel[i-1] = (rgb_color){0,0,0};
     led_strip_write(pixel, LED_COUNT);
     _delay_ms(50);
   }
-  pixel[LED_COUNT-1] = (rgb_color){0,0,0};
-  led_strip_write(pixel, LED_COUNT);
   PORTB |= 0x38;
   // boot led end
   
@@ -66,7 +60,7 @@ int main(void) {
     for (unsigned char i=0; i<4; i++) {
       I2C_writing_data[i] = key_state[i];
     }
-    //power_state = I2C_general_data[0] & 0x80;
+    power_state = I2C_general_data[0] & 0x80;
 
     // lock led check
     if(I2C_general_data[0] & 0x01) {
