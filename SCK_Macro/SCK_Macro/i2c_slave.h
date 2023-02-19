@@ -22,40 +22,41 @@ ISR(TWI_vect) {
 
   switch(I2C_SC) {
     case I2C_SC_SR_SWA:
-    I2C_data_count = 0;
+      I2C_data_count = 0;
     break;
     case I2C_SC_SR_GNC:
-    I2C_data_count = 0;
+      I2C_data_count = 0;
     break;
     case I2C_SC_SR_DBA:
-    I2C_reading_data[I2C_data_count] = TWDR;
-    I2C_data_count++;
+      I2C_reading_data[I2C_data_count] = TWDR;
+      I2C_data_count++;
     break;
     case I2C_SC_SR_DBN:
-    I2C_reading_data[I2C_data_count] = TWDR;
+      I2C_reading_data[I2C_data_count] = TWDR;
     break;
     case I2C_SC_SR_GNA:
-    I2C_general_data[I2C_data_count] = TWDR;
-    I2C_data_count++;
+      I2C_general_data[I2C_data_count] = TWDR;
+      I2C_data_count++;
     break;
     case I2C_SC_SR_GNN:
-    I2C_general_data[I2C_data_count] = TWDR;
+      I2C_general_data[I2C_data_count] = TWDR;
     break;
     case I2C_SC_SR_STO:
-    TWCR = 0xC5; // clear TWINT, ACK
+      TWCR = 0xC5; // clear TWINT, ACK
     break;
     case I2C_SC_ST_SRA:
-    TWDR = I2C_writing_data[0];
-    I2C_data_count = 1;
-    TWCR = 0xC5; // clear TWINT, ACK
+      I2C_writing_data[0] += rotery_check() << 6;
+      TWDR = I2C_writing_data[0];
+      I2C_data_count = 1;
+      TWCR = 0xC5; // clear TWINT, ACK
     break;
     case I2C_SC_ST_DBA:
-    TWDR = I2C_writing_data[I2C_data_count];
-    I2C_writing_data[I2C_data_count] = 0x00;
-    I2C_data_count++;
+      TWDR = I2C_writing_data[I2C_data_count];
+      I2C_writing_data[I2C_data_count] = 0x00;
+      I2C_data_count++;
     break;
     case I2C_SC_ST_DBN:
-    TWCR = 0xC5; // clear TWINT, ACK
+      TWCR = 0xC5; // clear TWINT, ACK
     break;
     case I2C_SC_ST_ARA:
     break;
