@@ -61,10 +61,30 @@ int main(void) {
     power_state = I2C_general_data[0] & 0x80;
     
     if(power_state) {
-      for(unsigned char i=0; i<LED_COUNT; i++) {
-        pixel[i] = (rgb_color){15,15,15};
-      }
+      if(I2C_general_data[1]) {// I2C_general_data[1] != 0
+        rgb_color col_temp[6];
+        // 0xRG, 0xBW
+        
+        for(unsigned char i=0; i<6; i++) {
+          col_temp[i].red   = I2C_general_data[3*i + 1];
+          col_temp[i].green = I2C_general_data[3*i + 2];
+          col_temp[i].blue  = I2C_general_data[3*i + 3];
+        }        
+        
+        for(unsigned char i=0; i<3; i++) {
+          pixel[i]    = col_temp[0];
+          pixel[i+3]  = col_temp[1];
+          pixel[i+6]  = col_temp[2];
+          pixel[i+10] = col_temp[5];
+        }       
+        pixel[9] = col_temp[4];
+        
       } else {
+        for(unsigned char i=0; i<LED_COUNT; i++) {
+          pixel[i] = (rgb_color){15,15,15};
+        }    
+      }        
+    } else {
       for(unsigned char i=0; i<LED_COUNT; i++) {
         pixel[i] = (rgb_color){0,0,0};
       }

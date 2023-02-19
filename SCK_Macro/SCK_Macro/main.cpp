@@ -6,7 +6,7 @@
 
 // DO NOT PUSH ANY KEY WHILE DOWNLOADING!!!
 
-#define F_CPU 16000000UL
+#define F_CPU 16000000
 
 #include <avr/io.h>
 #include <avr/interrupt.h>
@@ -43,18 +43,11 @@ int main(void) {
   I2C_init_slave(my_address);
   
   // boot led start
-  pixel[0] = (rgb_color){15,15,15};
-  led_strip_write(pixel, LED_COUNT);
-  _delay_ms(1000);
-  
-  for(unsigned char i=1; i<LED_COUNT; i++) {
+  for(unsigned char i=0; i<LED_COUNT; i++) {
     pixel[i] = (rgb_color){15,15,15};
-    pixel[i-1] = (rgb_color){0,0,0};
     led_strip_write(pixel, LED_COUNT);
-    _delay_ms(1000);
+    _delay_ms(100);
   }
-  pixel[LED_COUNT-1] = (rgb_color){0,0,0};
-  led_strip_write(pixel, LED_COUNT);
   // boot led end
   
   TWCR |= 0x80; //clear TWINT
@@ -66,15 +59,32 @@ int main(void) {
     I2C_writing_data[0] = key_state;
     power_state = I2C_general_data[0] & 0x80;
     
-    if(power_state) { // LED on
-      for(unsigned char i=0; i<LED_COUNT; i++) {
-        pixel[i] = (rgb_color){15,15,15};
-      }
-    } else { // LED off
+    if(power_state) {
+      if(I2C_general_data[1]) {// I2C_general_data[1] != 0
+        rgb_color col_temp[6];
+        // 0xRG, 0xBW
+        
+        for(unsigned char i=0; i<6; i++) {
+          col_temp[i].red   = I2C_general_data[3*i + 1];
+          col_temp[i].green = I2C_general_data[3*i + 2];
+          col_temp[i].blue  = I2C_general_data[3*i + 3];
+        }
+        
+        for(unsigned char i=0; i<5; i++) {
+          pixel[i] = col_temp[i+1];
+        }
+        
+      } else {
+        for(unsigned char i=0; i<LED_COUNT; i++) {
+          pixel[i] = (rgb_color){15,15,15};
+        }
+      }               
+    } else {
       for(unsigned char i=0; i<LED_COUNT; i++) {
         pixel[i] = (rgb_color){0,0,0};
       }
     }
+    
     cli();
     led_strip_write(pixel, LED_COUNT);
     sei();

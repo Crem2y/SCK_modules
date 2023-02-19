@@ -31,7 +31,7 @@ void get_key_state(void);
 void get_key_state_h(unsigned char mask);
 
 unsigned char my_address = 0x00;                // I2C address
-volatile bool power_state = true;              // led on/off
+volatile bool power_state = false;              // led on/off
 volatile unsigned char key_state[4] = {0x00, 0x00, 0x00, 0x00}; // key line H1, H2, H3, H4 {---, ---, ---, key_v1, key_v2, key_v3, key_v4, key_v5}
 unsigned char key_temp[4] = {0,};
 
@@ -80,10 +80,34 @@ int main(void) {
     }
     
     if(power_state) {
-      for(unsigned char i=0; i<LED_COUNT; i++) {
-        pixel[i] = (rgb_color){15,15,15};
+      if(I2C_general_data[1]) {// I2C_general_data[1] != 0
+        rgb_color col_temp[6];
+        // 0xRG, 0xBW
+        
+        for(unsigned char i=0; i<6; i++) {
+          col_temp[i].red   = I2C_general_data[3*i + 1];
+          col_temp[i].green = I2C_general_data[3*i + 2];
+          col_temp[i].blue  = I2C_general_data[3*i + 3];
+        }
+        
+        for(unsigned char i=0; i<4; i++) {
+          pixel[i]    = col_temp[1];
+          pixel[i+4]  = col_temp[2];
+          pixel[i+11] = col_temp[4];
+        }
+        pixel[8]  = col_temp[3];
+        pixel[9]  = col_temp[3];
+        pixel[10] = col_temp[3];
+        
+        pixel[15] = col_temp[5];
+        pixel[16] = col_temp[5];
+        
+        } else {
+        for(unsigned char i=0; i<LED_COUNT; i++) {
+          pixel[i] = (rgb_color){15,15,15};
+        }
       }
-    } else {
+      } else {
       for(unsigned char i=0; i<LED_COUNT; i++) {
         pixel[i] = (rgb_color){0,0,0};
       }
