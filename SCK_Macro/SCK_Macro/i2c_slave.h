@@ -5,6 +5,7 @@
 #include <util/delay.h>
 #include <stdbool.h>
 #include "i2c_status_code.h"
+#include "rotery_sw.h"
 
 #define I2C_GENERAL_BYTES_MAX 32           // I2C max reading bytes (1 ~ 255)
 #define I2C_READING_BYTES_MAX 32          // I2C max reading bytes (1 ~ 255)
