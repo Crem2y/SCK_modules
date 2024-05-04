@@ -28,11 +28,11 @@ void rotery_init(void) {
 }
 
 void rotery_changed(void) {
-  int A = (PIND & 0x04) ? 1 : 0;
-  int B = (PIND & 0x08) ? 1 : 0;
+  unsigned char A = (PIND & 0x04) ? 1 : 0;
+  unsigned char B = (PIND & 0x08) ? 1 : 0;
 
-  int current = (A << 1) | B;
-  int combined  = (previous << 2) | current;
+  unsigned char current = (A << 1) | B;
+  unsigned char combined  = (previous << 2) | current;
   
   if(combined == 0b0010 ||
   combined == 0b1011 ||
