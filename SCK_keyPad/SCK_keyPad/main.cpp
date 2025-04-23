@@ -6,7 +6,7 @@
 
 // DO NOT PUSH ANY KEY WHILE DOWNLOADING!!!
 
-#define F_CPU 16000000UL
+#define F_CPU 16000000
 
 #include <avr/io.h>
 #include <avr/interrupt.h>
@@ -23,7 +23,7 @@
 // general call data (power, ---, ---, ---, ---, scroll_lock, caps_lock, num_lock)
 
 #define LED_COUNT 17
-rgbw_color pixel[LED_COUNT];
+rgb_color pixel[LED_COUNT];
 
 void pin_init(void);
 unsigned char get_jp_state(void);
@@ -38,22 +38,17 @@ unsigned char key_temp[4] = {0,};
 int main(void) {
   
   pin_init();
-  my_address = 0x1C + get_jp_state();
+  my_address = 0x18 + get_jp_state();
   I2C_init_slave(my_address);
   
   // boot led start
-  pixel[0] = (rgbw_color){16,16,16,16};
-  led_strip_write(pixel, LED_COUNT);
-  _delay_ms(1000);
-  
-  for(unsigned char i=1; i<LED_COUNT; i++) {
-    pixel[i] = (rgbw_color){16,16,16,16};
-    pixel[i-1] = (rgbw_color){0,0,0,0};
+  PORTB &= ~0x38;
+  for(unsigned char i=0; i<LED_COUNT; i++) {
+    pixel[i] = (rgb_color){15,15,15};
     led_strip_write(pixel, LED_COUNT);
-    _delay_ms(1000);
+    _delay_ms(50);
   }
-  pixel[LED_COUNT-1] = (rgbw_color){0,0,0,0};
-  led_strip_write(pixel, LED_COUNT);
+  PORTB |= 0x38;
   // boot led end
   
   TWCR |= 0x80; //clear TWINT
@@ -85,12 +80,36 @@ int main(void) {
     }
     
     if(power_state) {
-      for(unsigned char i=0; i<LED_COUNT; i++) {
-        pixel[i] = (rgbw_color){16,16,16,16};
+      if(I2C_general_data[1]) {// I2C_general_data[1] != 0
+        rgb_color col_temp[6];
+        // 0xRG, 0xBW
+        
+        for(unsigned char i=0; i<6; i++) {
+          col_temp[i].red   = I2C_general_data[3*i + 1];
+          col_temp[i].green = I2C_general_data[3*i + 2];
+          col_temp[i].blue  = I2C_general_data[3*i + 3];
+        }
+        
+        for(unsigned char i=0; i<4; i++) {
+          pixel[i]    = col_temp[1];
+          pixel[i+4]  = col_temp[2];
+          pixel[i+11] = col_temp[4];
+        }
+        pixel[8]  = col_temp[3];
+        pixel[9]  = col_temp[3];
+        pixel[10] = col_temp[3];
+        
+        pixel[15] = col_temp[5];
+        pixel[16] = col_temp[5];
+        
+        } else {
+        for(unsigned char i=0; i<LED_COUNT; i++) {
+          pixel[i] = (rgb_color){15,15,15};
+        }
       }
       } else {
       for(unsigned char i=0; i<LED_COUNT; i++) {
-        pixel[i] = (rgbw_color){0,0,0,0};
+        pixel[i] = (rgb_color){0,0,0};
       }
     }
     

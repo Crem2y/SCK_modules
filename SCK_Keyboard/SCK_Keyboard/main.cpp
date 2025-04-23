@@ -43,6 +43,8 @@ int main(void) {
   
   adc_init();
   
+  _delay_ms(100);
+  
   while(1) {
     get_key_state();
     for (unsigned char i=0; i<14; i++) {
@@ -72,8 +74,8 @@ void pin_init(void) {
 } // key_h1 : ADC6, key_h2 : ADC7
 
 void adc_init(void) {
-  ADMUX = 0x46;
-  ADCSRA = 0x80;
+  ADCSRA = 0x84;
+  ADMUX = 0x40;
 }
 
 void get_key_state(void) {
@@ -96,9 +98,11 @@ void get_key_state(void) {
 }
 
 void get_key_state_h(unsigned char mask) {
-
+  unsigned short temp;
+  
   ADMUX = 0x46;   // set ADC6
-  ADCSRA = 0xC0;  // start ADC
+  //_delay_us(150);
+  ADCSRA = 0xD4;  // start ADC
   
   key_temp[2]  |= ((PINC & 0x01) ? 0x00 : mask);     // key_h3  check
   key_temp[3]  |= ((PINC & 0x02) ? 0x00 : mask);     // key_h4  check
@@ -107,15 +111,17 @@ void get_key_state_h(unsigned char mask) {
   key_temp[6]  |= ((PIND & 0x01) ? 0x00 : mask);     // key_h7  check
   key_temp[7]  |= ((PIND & 0x02) ? 0x00 : mask);     // key_h8  check
 
-  while(!(ADCSRA & 0x10));  // wait until ADC complete
+  while((ADCSRA & 0x10) != 0x10);  // wait until ADC complete
   // key_h1 check (ADC6)
-  if(ADC > 512) // if high
+  temp = ADCW;
+  if(temp > 768) // if high
     key_temp[0] |= 0x00;
   else
     key_temp[0] |= mask;
   
   ADMUX = 0x47;   // set ADC7
-  ADCSRA = 0xC0;  // start ADC
+  //_delay_us(150);
+  ADCSRA = 0xD4;  // start ADC
   
   key_temp[8]  |= ((PIND & 0x04) ? 0x00 : mask);     // key_h9  check
   key_temp[9]  |= ((PIND & 0x08) ? 0x00 : mask);     // key_h10 check
@@ -124,10 +130,11 @@ void get_key_state_h(unsigned char mask) {
   key_temp[12] |= ((PIND & 0x40) ? 0x00 : mask);     // key_h13 check
   key_temp[13] |= ((PIND & 0x80) ? 0x00 : mask);     // key_h14 check
   
-  while(!(ADCSRA & 0x10));  // wait until ADC complete
+  while((ADCSRA & 0x10) != 0x10);  // wait until ADC complete
   // key_h2 check (ADC7)
-  if(ADC > 512) // if high
-  key_temp[1] |= 0x00;
+  temp = ADCW;
+  if(temp > 768) // if high
+    key_temp[1] |= 0x00;
   else
-  key_temp[1] |= mask;
+    key_temp[1] |= mask;
 }
