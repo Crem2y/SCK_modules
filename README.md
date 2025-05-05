@@ -1,42 +1,65 @@
-# SCK_Macro
+# SCK_modules
 
-## Description
-슈퍼 커스텀 키보드 모듈들 펌웨어
+## 📌 Description
+Firmware for **modular submodules** of the SCK (Super Custom Keyboard) system.  
+Each module runs on its own MCU and communicates with the main controller via I2C.
+- [SCK_V1_main](https://github.com/Crem2y/SCK_V1_main)
+---
 
-### LED library
-[pololu/pololu-led-strip-avr](https://github.com/pololu/pololu-led-strip-avr)
+## 🔧 Development Environment
 
-***
+- **IDE**: Microchip Studio (or AVR Studio)  
+- **MCUs**:  
+  - ATmega8A (for most modules)  
+  - ATmega32U4 (for `Keyboard Module` only)
 
-## IDE
-Microchip Studio
-(or AVR studio)
+---
 
-***
+## 📚 Used Libraries
 
-## SCK Macro Module
-### Schemetic
-![img](images/SCK_MM_V1.2.png)
-Atmega8A
+- [**pololu-led-strip-avr**](https://github.com/pololu/pololu-led-strip-avr):  
+  Used for WS2812/APA102 LED strip control.
 
-## SCK keyPad Module
-### Schemetic
-![img](images/SCK_PM_V1.2_(main).png)
-![img](images/SCK_PM_V1.2_(key).png)
-![img](images/SCK_PM_V1.2_(led).png)
-Atmega8A
+---
 
-## SCK Fnkey Module
-### Schemetic
-![img](images/SCK_FM_V1.2_(main).png)
-![img](images/SCK_FM_V1.2_(key,led).png)
-Atmega8A
+## 🔌 Modules Overview
 
-## SCK Keyboard Module
-### Schemetic
-![img](images/SCK_KM_V1.2_(main).png)
-![img](images/SCK_KM_V1.2_(key).png)
-![img](images/SCK_KM_V1.2_(led).png)
-Atmega8A, Arduino pro micro (ATmega32U4, 5V, 16MHz)
+Each module has its own firmware and schematic.
 
-***
+### 🔹 SCK Macro Module
+- **MCU**: ATmega8A  
+- **Schematic**:  
+  ![Macro](images/SCK_MM_V1.2.png)
+
+---
+
+### 🔹 SCK Keypad Module
+- **MCU**: ATmega8A  
+- **Schematic**:  
+  ![Keypad main](images/SCK_PM_V1.2_(main).png)  
+  ![Keypad keys](images/SCK_PM_V1.2_(key).png)  
+  ![Keypad LEDs](images/SCK_PM_V1.2_(led).png)
+
+---
+
+### 🔹 SCK Fnkey Module
+- **MCU**: ATmega8A  
+- **Schematic**:  
+  ![Fnkey main](images/SCK_FM_V1.2_(main).png)  
+  ![Fnkey key/LED](images/SCK_FM_V1.2_(key,led).png)
+
+---
+
+### 🔹 SCK Keyboard Module
+- **MCUs**: ATmega8A + Arduino Pro Micro (ATmega32U4, 5V, 16MHz)  
+- **Schematic**:  
+  ![Keyboard main](images/SCK_KM_V1.2_(main).png)  
+  ![Keyboard keys](images/SCK_KM_V1.2_(key).png)  
+  ![Keyboard LEDs](images/SCK_KM_V1.2_(led).png)
+
+---
+
+## 📡 Communication (I2C)
+
+- Each module acts as an **I2C slave** with a fixed address  
+- Reports key or encoder input when polled by the main controller  
