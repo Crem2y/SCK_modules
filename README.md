@@ -3,15 +3,14 @@
 ## 📌 Description
 Firmware for **modular submodules** of the SCK (Super Custom Keyboard) system.  
 Each module runs on its own MCU and communicates with the main controller via I2C.
-- [SCK_V1_main](https://github.com/Crem2y/SCK_V1_main)
+- [SCK_main](https://github.com/Crem2y/SCK_main)
 ---
 
 ## 🔧 Development Environment
 
 - **IDE**: Microchip Studio (or AVR Studio)  
-- **MCUs**:  
-  - ATmega8A (for most modules)  
-  - ATmega32U4 (for `Keyboard Module` only)
+- **MCU**:  
+  - ATmega8A  
 
 ---
 
