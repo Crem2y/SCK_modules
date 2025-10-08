@@ -28,33 +28,33 @@ Each module has its own firmware and schematic.
 ### 🔹 SCK Macro Module
 - **MCU**: ATmega8A  
 - **Schematic**:  
-  ![Macro](images/SCK_MM_V1.2.png)
+  ![Macro](images/schematics/SCK_MM_V1.2.png)
 
 ---
 
 ### 🔹 SCK Keypad Module
 - **MCU**: ATmega8A  
 - **Schematic**:  
-  ![Keypad main](images/SCK_PM_V1.2_(main).png)  
-  ![Keypad keys](images/SCK_PM_V1.2_(key).png)  
-  ![Keypad LEDs](images/SCK_PM_V1.2_(led).png)
+  ![Keypad main](images/schematics/SCK_PM_V1.2_(main).png)  
+  ![Keypad keys](images/schematics/SCK_PM_V1.2_(key).png)  
+  ![Keypad LEDs](images/schematics/SCK_PM_V1.2_(led).png)
 
 ---
 
 ### 🔹 SCK Fnkey Module
 - **MCU**: ATmega8A  
 - **Schematic**:  
-  ![Fnkey main](images/SCK_FM_V1.2_(main).png)  
-  ![Fnkey key/LED](images/SCK_FM_V1.2_(key,led).png)
+  ![Fnkey main](images/schematics/SCK_FM_V1.2_(main).png)  
+  ![Fnkey key/LED](images/schematics/SCK_FM_V1.2_(key,led).png)
 
 ---
 
 ### 🔹 SCK Keyboard Module
 - **MCUs**: ATmega8A + Arduino Pro Micro (ATmega32U4, 5V, 16MHz)  
 - **Schematic**:  
-  ![Keyboard main](images/SCK_KM_V1.2_(main).png)  
-  ![Keyboard keys](images/SCK_KM_V1.2_(key).png)  
-  ![Keyboard LEDs](images/SCK_KM_V1.2_(led).png)
+  ![Keyboard main](images/schematics/SCK_KM_V1.2_(main).png)  
+  ![Keyboard keys](images/schematics/SCK_KM_V1.2_(key).png)  
+  ![Keyboard LEDs](images/schematics/SCK_KM_V1.2_(led).png)
 
 ---
 
