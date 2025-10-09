@@ -1,19 +1,19 @@
-# SCK_modules
+# SCK (Super Custom Keyboard)
 
 ![sck](images/picture/sck.jpg)
 
 ## Description
-Firmware for **modular submodules** of the SCK (Super Custom Keyboard) system.  
-Each module runs on its own MCU and communicates with the main controller via I2C.
+- SCK (Super Custom Keyboard)
+- Each module runs on its own MCU and communicates with the main controller via I2C.
 ---
 
 ## Development Environment
 
-### main
+### Main board
 - **IDE**: PlatformIO (or arduino IDE)
 - **Board**:  
   - Arduino Pro Micro (ATmega32U4, 5V, 16MHz)
-### modules
+### Modules
 - **IDE**: Microchip Studio (or AVR Studio)  
 - **MCU**:  
   - ATmega8A
@@ -54,26 +54,26 @@ Each module runs on its own MCU and communicates with the main controller via I2
 
 ## How to upload firmware
 
-### main board
+### Main board
 1. Press `D_PG` key (Default : FN1 + `\``)
 2. The LED will blink slowly.
 3. You can upload firmware to main board.
 4. Press ESC to cancel programming mode.
-### modules
+### Modules
 1. You will need an AVR ISP that can supply power to target board.
 2. Connect AVR ISP to ISP port. (2x3 header)
 3. Program to module. (DO NOT press any key while programming)
 
 ---
 
-## Communication (I2C)
+## Communication (I²C)
 
-- Each module acts as an **I2C slave** with a fixed address (it can be set by jumpers in each modules)
+- Each module acts as an **I²C slave** with a fixed address (it can be set by jumpers in each modules)
 - Reports key or encoder input when polled by the main controller  
 
 ---
 
-## Used Libraries
+## Third-party libraries
 
 - [**pololu-led-strip-avr**](https://github.com/pololu/pololu-led-strip-avr):  
   Used for WS2812/APA102 LED strip control.
