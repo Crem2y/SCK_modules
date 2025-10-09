@@ -1,5 +1,7 @@
 # SCK_modules
 
+![sck](images/picture/sck.jpg)
+
 ## Description
 Firmware for **modular submodules** of the SCK (Super Custom Keyboard) system.  
 Each module runs on its own MCU and communicates with the main controller via I2C.
@@ -16,8 +18,9 @@ Each module runs on its own MCU and communicates with the main controller via I2
 
 ## Modules Overview
 
+![modules](images/picture/modules.jpg)
+
 - Each module has its own firmware and schematic.
-- It can be equip multiple of the same module, but only the macro module is working.
 
 ### SCK Main
 - **MCU**: Arduino Pro Micro (ATmega32U4, 5V, 16MHz)
