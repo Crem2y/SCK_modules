@@ -3,7 +3,7 @@
 ![sck](images/picture/sck.jpg)
 
 ## Description
-- SCK (Super Custom Keyboard)
+- Modular keyboard system
 - Each module runs on its own MCU and communicates with the main controller via I2C.
 ---
 
@@ -73,9 +73,21 @@
 
 ---
 
-## Third-party libraries
+## License
 
-- [**pololu-led-strip-avr**](https://github.com/pololu/pololu-led-strip-avr):  
-  Used for WS2812/APA102 LED strip control.
-- [**NicoHood/HID**](https://github.com/NicoHood/HID):  
-  Used for enhanced USB HID support on ATmega32U4 boards.
+This project is licensed under the MIT License.  
+See [LICENSE](./LICENSE) for details.
+
+---
+
+### Third-party libraries
+
+This project is licensed primarily under the **MIT License**.  
+It also includes third-party components with the following licenses:
+
+- **NicoHood/HID** (by NicoHood), licensed under the **MIT License**.  
+  See [NicoHood-HID-MIT.txt](third_party_licenses/NicoHood-HID-MIT.txt).
+- **Adafruit_NeoPixel** (by Adafruit), licensed under the **LGPL-3.0 License**.  
+  See [Adafruit_NeoPixel-LGPL-3.0.txt](third_party_licenses/Adafruit_NeoPixel-LGPL-3.0.txt).
+- **pololu-led-strip-avr** (by pololu), licensed under the **MIT License**.  
+See [pololu-led-strip-avr-MIT.txt](third_party_licenses/pololu-led-strip-avr-MIT.txt).
